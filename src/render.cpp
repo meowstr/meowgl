@@ -60,6 +60,7 @@ struct {
         int sun_combined;
         int depth_texture;
         int material_texture;
+        int material_mix;
     } material_shader;
 
     vbuffer_t model_pos_buffer;
@@ -69,8 +70,6 @@ struct {
     vbuffer_t fb_pos_buffer;
 
     framebuffer_t depth_fb;
-
-    int miku_texture;
 
 } intern;
 
@@ -91,6 +90,7 @@ static void init_shader1()
         find_uniform( id, "u_depth_texture" );
     intern.material_shader.material_texture =
         find_uniform( id, "u_material_texture" );
+    intern.material_shader.material_mix = find_uniform( id, "u_material_mix" );
 
     glBindAttribLocation( id, 0, "a_pos" );
     glBindAttribLocation( id, 1, "a_normal" );
@@ -138,6 +138,16 @@ static void setup_light_camera()
 
 static void render_model( int model_id )
 {
+    if ( rstate.model_texture_list[ model_id ] == -1 ) {
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, 0 );
+        set_uniform( intern.material_shader.material_mix, 1.0f );
+    } else {
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, rstate.model_texture_list[ model_id ] );
+        set_uniform( intern.material_shader.material_mix, 0.0f );
+    }
+
     wavefront_t & model = rstate.model_list[ model_id ];
 
     intern.model_pos_buffer.set( model.pos_list, model.vertex_count );
@@ -154,9 +164,6 @@ static void render_model( int model_id )
 static void render_scene()
 {
     vec4 white{ 1.0f, 1.0f, 1.0f, 1.0f };
-
-    glActiveTexture( GL_TEXTURE1 );
-    glBindTexture( GL_TEXTURE_2D, intern.miku_texture );
 
     for ( int i = 0; i < rstate.entity_count; i++ ) {
         set_uniform(
@@ -209,6 +216,7 @@ int add_model( const char * filename )
     int id = rstate.model_count;
     load_wavefront( rstate.model_list + id, find_res( filename ) );
     rstate.model_list[ id ].filename = strdup( filename );
+    rstate.model_texture_list[ id ] = -1;
     rstate.model_count++;
 
     return id;
@@ -218,6 +226,7 @@ void render_init()
 {
     rstate.entity_list = new entity_t[ 1024 ];
     rstate.model_list = new wavefront_t[ 32 ];
+    rstate.model_texture_list = new int[ 32 ];
     rstate.entity_count = 0;
     rstate.model_count = 0;
 
@@ -232,8 +241,6 @@ void render_init()
     init_shader1();
 
     intern.depth_fb.init_depth( 1024, 1024 );
-
-    intern.miku_texture = load_texture( find_res( "colors_miku.png" ) );
 
     glEnable( GL_DEPTH_TEST );
     //  glEnable( GL_BLEND );

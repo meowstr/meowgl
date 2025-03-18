@@ -11,8 +11,8 @@
 
 static struct {
     GLFWwindow * window = nullptr;
-    int width = 1920;
-    int height = 1080;
+    int width = 1200;
+    int height = 800;
 
     int pending_event_list[ 64 ];
     int pending_event_count = 0;

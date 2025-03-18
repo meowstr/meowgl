@@ -1,6 +1,7 @@
 #include "hardware.hpp"
 #include "logging.hpp"
 #include "render.hpp"
+#include "render_utils.hpp"
 #include "state.hpp"
 
 #include <cglm/affine.h>
@@ -67,6 +68,9 @@ static void init()
 
     int miku_model = add_model( "miku.obj" );
     int floor_model = add_model( "SM_FloorTile.obj" );
+    int miku_texture = load_texture( find_res( "colors_miku.png" ) );
+
+    rstate.model_texture_list[ miku_model ] = miku_texture;
 
     auto & model = rstate.model_list[ miku_model ];
 

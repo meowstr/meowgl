@@ -39,6 +39,7 @@ varying vec2 v_uv;
 
 uniform sampler2D u_depth_texture;
 uniform sampler2D u_material_texture;
+uniform float u_material_mix;
 varying vec3 v_pos_sun_coords;
 
 float sample_depth()
@@ -56,6 +57,7 @@ void main()
 {
     float light = 0.5 * dot( -normalize(v_normal), normalize(vec3( -1.0, -1.0, -1.0 )) );
     vec4 texture_color = texture2D( u_material_texture, v_uv );
+    texture_color = mix( texture_color, vec4(1.0, 1.0, 1.0, 1.0), u_material_mix );
     gl_FragColor = sample_depth() * light * ( u_color * texture_color );
     gl_FragColor.a = 1.0;
 }

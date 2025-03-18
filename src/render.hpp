@@ -32,6 +32,7 @@ struct renderstate_t {
     int entity_count;
 
     wavefront_t * model_list;
+    int * model_texture_list;
     int model_count;
 
     camera_t camera;
