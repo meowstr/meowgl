@@ -26,6 +26,7 @@ struct state_t {
 
     int current_entity;
     int current_axis;
+    int move_mode;
 };
 
 extern state_t state;

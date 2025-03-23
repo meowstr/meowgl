@@ -11,8 +11,8 @@
 
 static struct {
     GLFWwindow * window = nullptr;
-    int width = 1200;
-    int height = 800;
+    int width = 1920;
+    int height = 1080;
 
     int pending_event_list[ 64 ];
     int pending_event_count = 0;
@@ -32,6 +32,8 @@ static void push_event( int e )
 static void
 handle_mouse_button( GLFWwindow * window, int button, int action, int mods )
 {
+    if ( ImGui::GetIO().WantCaptureMouse ) return;
+
     if ( button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS ) {
         push_event( EVENT_TOUCH );
     }

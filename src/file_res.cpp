@@ -7,6 +7,9 @@ res_t find_res( const char * name )
 {
     res_t res;
 
+    res.data = nullptr;
+    res.size = 0;
+
     char path[ 1024 ];
 
 #ifdef EMSCRIPTEN

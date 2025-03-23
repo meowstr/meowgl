@@ -114,7 +114,8 @@ static int create_shader( int * out, int type, const char * source )
             char * info_log = new char[ sizeof( char ) * info_len ];
 
             glGetShaderInfoLog( shader, info_len, nullptr, info_log );
-            ERROR_LOG( "failed to compile shader:\n%s", info_log );
+            ERROR_LOG( "failed to compile shader:\n" );
+            printf( "\n%s\n", info_log );
 
             delete[] info_log;
         } else {
@@ -319,8 +320,8 @@ void framebuffer_t::init_depth( int in_width, int in_height )
         0
     );
 
-    //glDrawBuffer( GL_NONE );
-    //glReadBuffer( GL_NONE );
+    // glDrawBuffer( GL_NONE );
+    // glReadBuffer( GL_NONE );
 
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
@@ -345,11 +346,11 @@ void framebuffer_t::init( int in_width, int in_height )
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGB,
+        GL_RGBA,
         width,
         height,
         0,
-        GL_RGB,
+        GL_RGBA,
         GL_UNSIGNED_BYTE,
         nullptr
     );

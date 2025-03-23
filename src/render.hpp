@@ -35,9 +35,12 @@ struct renderstate_t {
     int * model_texture_list;
     int model_count;
 
+    int hi_entity;
+
     camera_t camera;
 
     mat4 view_inverse;
+    mat4 combined;
 };
 
 extern renderstate_t rstate;

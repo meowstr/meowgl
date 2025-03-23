@@ -44,6 +44,8 @@ add_library( imgui
     libs/imgui/backends/imgui_impl_glfw.cpp 
     libs/imgui/backends/imgui_impl_opengl3.cpp )
 target_include_directories( imgui PUBLIC libs/imgui )
+add_library( cjson libs/cjson/cJSON.c )
+target_include_directories( cjson PUBLIC libs/cjson )
 
 #
 # linux build 
@@ -54,7 +56,7 @@ if ( (NOT DEFINED EMSCRIPTEN) AND UNIX )
   find_package( PkgConfig REQUIRED )
   pkg_check_modules( GLFW REQUIRED IMPORTED_TARGET glfw3 )
   add_executable( app ${GAME_SOURCES} src/platform/desktop.cpp )
-  target_link_libraries( app PRIVATE imgui glad cglm stb PkgConfig::GLFW )
+  target_link_libraries( app PRIVATE imgui cjson glad cglm stb PkgConfig::GLFW )
   add_custom_target( run COMMAND app DEPENDS app WORKING_DIRECTORY ${CMAKE_PROJECT_DIR} )
 
 endif()

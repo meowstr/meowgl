@@ -55,11 +55,41 @@ float sample_depth()
 
 void main()
 {
-    float light = 0.5 * dot( -normalize(v_normal), normalize(vec3( -1.0, -1.0, -1.0 )) );
+    float light = 0.5 * dot( -normalize(v_normal), normalize(vec3( -0.9, -0.8, -2.0 )) );
     vec4 texture_color = texture2D( u_material_texture, v_uv );
     texture_color = mix( texture_color, vec4(1.0, 1.0, 1.0, 1.0), u_material_mix );
     gl_FragColor = sample_depth() * light * ( u_color * texture_color );
     gl_FragColor.a = 1.0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#shader vertex_mesh_highlight
+////////////////////////////////////////////////////////////////////////////////
+
+#version 100
+precision highp float;
+attribute vec3 a_pos;
+attribute vec3 a_normal;
+attribute vec2 a_uv;
+uniform mat4 u_proj;
+uniform mat4 u_view;
+uniform mat4 u_model;
+
+void main()
+{
+    gl_Position = u_proj * u_view * u_model * vec4( a_pos, 1.0 );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#shader fragment_highlight
+////////////////////////////////////////////////////////////////////////////////
+
+#version 100
+precision highp float;
+
+void main()
+{
+    gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +104,48 @@ void main()
 {
     v_uv = a_uv;
     gl_Position = vec4( a_pos, 0.0, 1.0 );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#shader fragment_highlight_post
+////////////////////////////////////////////////////////////////////////////////
+
+#version 100
+precision highp float;
+uniform sampler2D u_texture;
+uniform vec2 u_size;
+varying vec2 v_uv;
+void main()
+{
+    int kernel_size = 5;
+
+    // 1  1  1
+    // 1 -9  1
+    // 1  1  1
+
+
+    float total_alpha = 0.0;
+
+    for (int i = 0; i < kernel_size; i++) {
+        for (int j = 0; j < kernel_size; j++) {
+            int dx = i - kernel_size / 2;
+            int dy = j - kernel_size / 2;
+
+            float x = v_uv.x + ( float( dx ) / u_size.x );
+            float y = v_uv.y + ( float( dy ) / u_size.y );
+
+            total_alpha += texture2D( u_texture, vec2( x, y ) ).a;
+        }
+    }
+
+    float center_sample = texture2D( u_texture, v_uv ).a;
+
+    if (total_alpha > 0.0 && center_sample == 0.0) {
+        gl_FragColor = vec4( 1.0, 1.0, 0.0, 1.0 );
+    } else {
+        gl_FragColor = vec4( 0.0, 0.0, 0.0, 0.0 );
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
