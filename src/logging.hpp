@@ -6,7 +6,7 @@ void logger_log(
     int line,
     const char * str,
     ...
-) __attribute__( ( format( printf, 4, 5 ) ) );
+); // __attribute__( ( format( printf, 4, 5 ) ) );
 
 #define DEBUG_LOG( ... ) logger_log( 0, __func__, __LINE__, __VA_ARGS__ );
 #define INFO_LOG( ... )  logger_log( 1, __func__, __LINE__, __VA_ARGS__ );

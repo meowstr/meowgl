@@ -70,10 +70,12 @@ if ( (NOT DEFINED EMSCRIPTEN) AND WIN32 )
   add_library( glfw STATIC IMPORTED )
   set_target_properties(glfw PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/libs/glfw/lib-vc2019/glfw3.lib)
   target_include_directories(glfw INTERFACE libs/glfw/include)
-  add_library( openal SHARED IMPORTED )
+
+  target_link_libraries(imgui PRIVATE glfw)
+
   add_executable( app ${GAME_SOURCES} src/platform/desktop.cpp )
   set_target_properties(app PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
-  target_link_libraries( app PRIVATE glad cglm stb glfw )
+  target_link_libraries( app PRIVATE imgui cjson glad cglm stb glfw )
 endif()
 
 #

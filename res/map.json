@@ -3,7 +3,7 @@
 	"color_palette": "colors_miku.png",
 	"entity_list": [{
 			"model": "miku.obj",
-			"pos": [1, 0, -6],
+			"pos": [0, 0, 0],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
@@ -53,163 +53,553 @@
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [-2, 0, -4],
+			"pos": [10, 0, 2],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [0, 0, -4],
+			"pos": [10, 0, 0],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [2, 0, -4],
+			"pos": [10, 0, -2],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [2, 0, -6],
+			"pos": [10, 0, -4],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [0, 0, -6],
+			"pos": [10, 0, -6],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [-2, 0, -6],
+			"pos": [10, 0, -8],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [-2, 0, -9],
+			"pos": [10, 0, -10],
 			"rot": [0, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Window.obj",
-			"pos": [-2, 0, -6],
-			"rot": [0, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Window.obj",
-			"pos": [0, 0, -6],
-			"rot": [0, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Window.obj",
-			"pos": [2, 0, -6],
-			"rot": [0, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Window.obj",
-			"pos": [-2, 0, -6],
-			"rot": [0, 90, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Exhaust.obj",
-			"pos": [2, 2, -6],
-			"rot": [0, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Exhaust.obj",
-			"pos": [0, 2, -6],
-			"rot": [0, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Exhaust.obj",
-			"pos": [-2, 2, -6],
-			"rot": [0, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Wall_Exhaust.obj",
-			"pos": [-2, 0, 2],
-			"rot": [0, 90, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Exhaust_Fan.obj",
-			"pos": [0, 3, -7],
-			"rot": [90, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Exhaust_Fan.obj",
-			"pos": [2, 3, -7],
-			"rot": [90, 0, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "SM_Exhaust_Fan.obj",
-			"pos": [-2, 3, -7],
-			"rot": [90, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [-3, 3, -6],
-			"rot": [0, 0, -90],
+			"pos": [10, 0, -12],
+			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [-3, 1, -4],
-			"rot": [0, 0, -90],
+			"pos": [8, 0, -12],
+			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [-3, 1, -2],
-			"rot": [0, 0, -90],
+			"pos": [6, 0, -12],
+			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [-3, 1, 0],
-			"rot": [0, 0, -90],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "pipe.obj",
-			"pos": [-3, 1, -2],
-			"rot": [0, 0, 90],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "miku.obj",
-			"pos": [2, 0, -4],
-			"rot": [0, 45, 0],
-			"scale": [1, 1, 1]
-		}, {
-			"model": "miku.obj",
-			"pos": [1, 0, -3],
+			"pos": [4, 0, -12],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "miku.obj",
-			"pos": [0, 0, -5],
+			"model": "SM_FloorTile.obj",
+			"pos": [2, 0, -12],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "miku.obj",
-			"pos": [2, 0, -6],
+			"model": "SM_FloorTile.obj",
+			"pos": [2, 0, -14],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "miku.obj",
-			"pos": [-2, 0, -5],
+			"model": "SM_FloorTile.obj",
+			"pos": [2, 0, -16],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "miku.obj",
-			"pos": [2, 0, -2],
+			"model": "SM_FloorTile.obj",
+			"pos": [2, 0, -18],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "miku.obj",
-			"pos": [-1, 0, -4],
+			"model": "SM_FloorTile.obj",
+			"pos": [4, 0, -18],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "miku.obj",
-			"pos": [-2, 0, -6],
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 0, -18],
 			"rot": [0, 0, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "miku.obj",
-			"pos": [-2, 0, 3],
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 0, -16],
 			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 0, -14],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 0, -12],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 0, -12],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 0, -6],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 0, 0],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 0, 0],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 0, 2],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 0, 2],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [0, 0, -18],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [-2, 0, -18],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [-4, 0, -18],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 1, 3],
+			"rot": [-90, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 1, 3],
+			"rot": [-90, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 1, 3],
+			"rot": [-90, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, 2],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, 0],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, -2],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, -4],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, -6],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, -8],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, -10],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [15, 1, 2],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [15, 1, 0],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [11, 1, -2],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [11, 1, -4],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [13, 1, -6],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 1, -1],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 1, -1],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 1, -13],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 1, -13],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 1, -13],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [8, 1, -13],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [15, 1, -12],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 1, -11],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 1, -11],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [11, 1, -10],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [11, 1, -8],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 1, -7],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [8, 1, -11],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 1, -11],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [4, 1, -11],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [2, 1, -11],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [1, 1, -12],
+			"rot": [-90, -450, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [1, 1, -14],
+			"rot": [-90, -450, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [1, 1, -16],
+			"rot": [-90, -450, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [0, 1, -17],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [-2, 1, -17],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [-4, 1, -17],
+			"rot": [-90, -360, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [-4, 1, -19],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [-2, 1, -19],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [0, 1, -19],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [2, 1, -19],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [4, 1, -19],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 1, -19],
+			"rot": [-90, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [7, 1, -18],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [7, 1, -16],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [7, 1, -14],
+			"rot": [-90, -270, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [5, 1, -16],
+			"rot": [-90, -450, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [5, 1, -14],
+			"rot": [-90, -450, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [4, 1, -13],
+			"rot": [-90, -540, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [3, 1, -14],
+			"rot": [-90, -630, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [3, 1, -16],
+			"rot": [-90, -630, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [4, 1, -17],
+			"rot": [-90, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 1, -5],
+			"rot": [-90, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 2, 2],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 2, 0],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 2, 0],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 2, 2],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, 2],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, 0],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, -2],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, -4],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, -6],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 2, -6],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, -8],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, -10],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [10, 2, -12],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [12, 2, -12],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [14, 2, -12],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [8, 2, -12],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 2, -12],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 2, -14],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 2, -16],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 2, -18],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [4, 2, -18],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [2, 2, -18],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [4, 2, -12],
+			"rot": [-180, -720, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Ceiling_Light.obj",
+			"pos": [10, 0, -2],
+			"rot": [0, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Ceiling_Light.obj",
+			"pos": [10, 0, -8],
+			"rot": [0, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Ceiling_Light.obj",
+			"pos": [10, 0, -5],
+			"rot": [0, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Ceiling_Light.obj",
+			"pos": [12, 0, 1],
+			"rot": [0, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Ceiling_Light.obj",
+			"pos": [8, 0, -12],
+			"rot": [0, -180, 0],
 			"scale": [1, 1, 1]
 		}]
 }

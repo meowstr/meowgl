@@ -281,19 +281,13 @@ void set_uniform( int uniform, vec4 ( &m )[ 4 ] )
     glUniformMatrix4fv( uniform, 1, GL_FALSE, (float *) m );
 }
 
-void framebuffer_t::init_depth( int in_width, int in_height )
+int framebuffer_t::init_depth_texture()
 {
-    width = in_width;
-    height = in_height;
+    glBindFramebuffer( GL_FRAMEBUFFER, id );
 
-    unsigned int fbo;
-    glGenFramebuffers( 1, &fbo );
-
-    glBindFramebuffer( GL_FRAMEBUFFER, fbo );
-
-    unsigned int local_texture;
-    glGenTextures( 1, &local_texture );
-    glBindTexture( GL_TEXTURE_2D, local_texture );
+    unsigned int texture;
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
 
     glTexImage2D(
         GL_TEXTURE_2D,
@@ -316,17 +310,13 @@ void framebuffer_t::init_depth( int in_width, int in_height )
         GL_FRAMEBUFFER,
         GL_DEPTH_ATTACHMENT,
         GL_TEXTURE_2D,
-        local_texture,
+        texture,
         0
     );
 
-    // glDrawBuffer( GL_NONE );
-    // glReadBuffer( GL_NONE );
-
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
-    id = fbo;
-    texture = local_texture;
+    return texture;
 }
 
 void framebuffer_t::init( int in_width, int in_height )
@@ -337,11 +327,54 @@ void framebuffer_t::init( int in_width, int in_height )
     unsigned int fbo;
     glGenFramebuffers( 1, &fbo );
 
-    glBindFramebuffer( GL_FRAMEBUFFER, fbo );
+    id = fbo;
+}
 
-    unsigned int local_texture;
-    glGenTextures( 1, &local_texture );
-    glBindTexture( GL_TEXTURE_2D, local_texture );
+int framebuffer_t::init_hdr_texture( int attachment_index )
+{
+    glBindFramebuffer( GL_FRAMEBUFFER, id );
+
+    unsigned int texture;
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA32F,
+        width,
+        height,
+        0,
+        GL_RGBA,
+        GL_FLOAT,
+        nullptr
+    );
+
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0 + attachment_index,
+        GL_TEXTURE_2D,
+        texture,
+        0
+    );
+
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+    return texture;
+}
+
+int framebuffer_t::init_color_texture( int attachment_index )
+{
+    glBindFramebuffer( GL_FRAMEBUFFER, id );
+
+    unsigned int texture;
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
 
     glTexImage2D(
         GL_TEXTURE_2D,
@@ -355,23 +388,22 @@ void framebuffer_t::init( int in_width, int in_height )
         nullptr
     );
 
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
     glFramebufferTexture2D(
         GL_FRAMEBUFFER,
-        GL_COLOR_ATTACHMENT0,
+        GL_COLOR_ATTACHMENT0 + attachment_index,
         GL_TEXTURE_2D,
-        local_texture,
+        texture,
         0
     );
 
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
-    id = fbo;
-    texture = local_texture;
+    return texture;
 }
 
 #define STB_IMAGE_IMPLEMENTATION

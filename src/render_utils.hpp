@@ -16,13 +16,13 @@ struct vbuffer_t {
 
 struct framebuffer_t {
     int id;
-    int texture;
     int width;
     int height;
 
     void init( int width, int height );
-    void init_depth( int width, int height );
-    void bind();
+    int init_color_texture( int attachment_index );
+    int init_hdr_texture( int attachment_index );
+    int init_depth_texture();
 };
 
 int load_texture( res_t res );

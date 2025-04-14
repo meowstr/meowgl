@@ -62,6 +62,7 @@ struct {
         int depth_texture;
         int material_texture;
         int material_mix;
+        int emission;
     } material_shader;
 
     struct {
@@ -77,6 +78,19 @@ struct {
         int size;
     } highlight_post_shader;
 
+    struct {
+        int id;
+        int texture;
+        int size;
+    } bloom_post_shader;
+
+    struct {
+        int id;
+        int scene_texture;
+        int bloom_texture;
+        int size;
+    } scene_compose_shader;
+
     vbuffer_t model_pos_buffer;
     vbuffer_t model_normal_buffer;
     vbuffer_t model_uv_buffer;
@@ -86,6 +100,14 @@ struct {
 
     framebuffer_t depth_fb;
     framebuffer_t highlight_fb;
+    framebuffer_t bloom_fb;
+    framebuffer_t scene_fb;
+
+    int scene_fb_texture;
+    int scene_fb_emission_texture;
+    int depth_fb_texture;
+    int highlight_fb_texture;
+    int bloom_fb_texture;
 
 } intern;
 
@@ -107,6 +129,7 @@ static void init_shader1()
     intern.material_shader.material_texture =
         find_uniform( id, "u_material_texture" );
     intern.material_shader.material_mix = find_uniform( id, "u_material_mix" );
+    intern.material_shader.emission = find_uniform( id, "u_emission" );
 
     glBindAttribLocation( id, 0, "a_pos" );
     glBindAttribLocation( id, 1, "a_normal" );
@@ -140,6 +163,24 @@ static void init_shader3()
     intern.highlight_post_shader.id = id;
     intern.highlight_post_shader.texture = find_uniform( id, "u_texture" );
     intern.highlight_post_shader.size = find_uniform( id, "u_size" );
+
+    glBindAttribLocation( id, 0, "a_pos" );
+    glBindAttribLocation( id, 1, "a_uv" );
+}
+
+static void init_shader4()
+{
+    int id = build_shader(
+        find_shader_string( "vertex_screen" ),
+        find_shader_string( "fragment_scene_compose" )
+    );
+
+    intern.scene_compose_shader.id = id;
+    intern.scene_compose_shader.scene_texture =
+        find_uniform( id, "u_scene_texture" );
+    intern.scene_compose_shader.bloom_texture =
+        find_uniform( id, "u_bloom_texture" );
+    intern.scene_compose_shader.size = find_uniform( id, "u_size" );
 
     glBindAttribLocation( id, 0, "a_pos" );
     glBindAttribLocation( id, 1, "a_uv" );
@@ -213,6 +254,10 @@ static void render_scene()
         set_uniform( intern.material_shader.material_texture, 1 );
         set_uniform( intern.material_shader.color, white );
         int model_id = rstate.entity_list[ i ].model;
+        set_uniform(
+            intern.material_shader.emission,
+            rstate.model_emission_list[ model_id ]
+        );
         if ( rstate.model_texture_list[ model_id ] == -1 ) {
             glActiveTexture( GL_TEXTURE1 );
             glBindTexture( GL_TEXTURE_2D, 0 );
@@ -231,6 +276,7 @@ static void render_scene()
 
 void update_camera()
 {
+    // TODO: do less
     setup_camera();
 }
 
@@ -270,6 +316,7 @@ int add_model( const char * filename )
     load_wavefront( rstate.model_list + id, find_res( filename ) );
     rstate.model_list[ id ].filename = strdup( filename );
     rstate.model_texture_list[ id ] = -1;
+    glm_vec3_zero( rstate.model_emission_list[ id ] );
     rstate.model_count++;
 
     return id;
@@ -286,6 +333,7 @@ void render_init()
     rstate.entity_list = new entity_t[ 1024 ];
     rstate.model_list = new wavefront_t[ 32 ];
     rstate.model_texture_list = new int[ 32 ];
+    rstate.model_emission_list = new vec3[ 32 ];
     rstate.entity_count = 0;
     rstate.model_count = 0;
 
@@ -306,9 +354,20 @@ void render_init()
     init_shader1();
     init_shader2();
     init_shader3();
+    init_shader4();
 
-    intern.depth_fb.init_depth( 4096, 4096 );
+    intern.depth_fb.init( 4096, 4096 );
     intern.highlight_fb.init( hardware_width(), hardware_height() );
+    intern.bloom_fb.init( hardware_width(), hardware_height() );
+    intern.scene_fb.init( hardware_width(), hardware_height() );
+
+    intern.depth_fb_texture = intern.depth_fb.init_depth_texture();
+    intern.highlight_fb_texture = intern.highlight_fb.init_color_texture( 0 );
+    intern.bloom_fb_texture = intern.bloom_fb.init_color_texture( 0 );
+
+    intern.scene_fb.init_depth_texture();
+    intern.scene_fb_texture = intern.scene_fb.init_hdr_texture( 0 );
+    intern.scene_fb_emission_texture = intern.scene_fb.init_color_texture( 1 );
 
     glEnable( GL_DEPTH_TEST );
     glEnable( GL_CULL_FACE );
@@ -329,6 +388,7 @@ static void render_highlight()
     if ( rstate.hi_entity == -1 ) return;
 
     glDisable( GL_CULL_FACE );
+    glDisable( GL_DEPTH_TEST );
     glBindFramebuffer( GL_FRAMEBUFFER, intern.highlight_fb.id );
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -349,7 +409,7 @@ static void render_highlight()
     glUseProgram( intern.highlight_post_shader.id );
 
     glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, intern.highlight_fb.texture );
+    glBindTexture( GL_TEXTURE_2D, intern.highlight_fb_texture );
 
     vec2 size;
     size[ 0 ] = hardware_width();
@@ -360,6 +420,7 @@ static void render_highlight()
 
     render_fb();
     glEnable( GL_CULL_FACE );
+    glEnable( GL_DEPTH_TEST );
 }
 
 static void render_shadow_map()
@@ -383,25 +444,54 @@ static void render_shadow_map()
     set_uniform( intern.material_shader.depth_texture, 0 );
 
     render_scene();
+}
 
-    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-    glViewport( 0, 0, hardware_width(), hardware_height() );
-    glCullFace( GL_BACK );
+static void enable_attachment0()
+{
+    GLenum buffers[]{ GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers( 1, buffers );
+}
+
+static void enable_attachment1()
+{
+    GLenum buffers[]{ GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers( 1, buffers );
+}
+
+static void enable_attachment0_attachment1()
+{
+    GLenum buffers[]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers( 2, buffers );
 }
 
 void render()
 {
+    vec2 size;
+    size[ 0 ] = hardware_width();
+    size[ 1 ] = hardware_height();
+
     render_shadow_map();
 
     setup_camera();
 
+    glBindFramebuffer( GL_FRAMEBUFFER, intern.scene_fb.id );
+
+    enable_attachment0();
+    glClearColor( 1.0f, 0.0f, 0.0f, 1.0f );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    enable_attachment1();
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    enable_attachment0_attachment1();
+    glViewport( 0, 0, hardware_width(), hardware_height() );
+    glCullFace( GL_BACK );
 
     glUseProgram( intern.material_shader.id );
 
     glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, intern.depth_fb.texture );
+    glBindTexture( GL_TEXTURE_2D, intern.depth_fb_texture );
 
     set_uniform( intern.material_shader.view, intern.view );
     set_uniform( intern.material_shader.proj, intern.proj );
@@ -409,6 +499,30 @@ void render()
     set_uniform( intern.material_shader.depth_texture, 0 );
 
     render_scene();
+
+    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+    enable_attachment0();
+
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glUseProgram( intern.scene_compose_shader.id );
+
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( GL_TEXTURE_2D, intern.scene_fb_texture );
+    glActiveTexture( GL_TEXTURE1 );
+    glBindTexture( GL_TEXTURE_2D, intern.scene_fb_emission_texture );
+    set_uniform( intern.scene_compose_shader.scene_texture, 0 );
+    set_uniform( intern.scene_compose_shader.bloom_texture, 1 );
+    set_uniform( intern.scene_compose_shader.size, size );
+
+    glDisable( GL_CULL_FACE );
+    glDisable( GL_DEPTH_TEST );
+
+    render_fb();
+
+    glEnable( GL_CULL_FACE );
+    glEnable( GL_DEPTH_TEST );
 
     render_highlight();
 }

@@ -39,8 +39,35 @@ static void setup_resource_list()
     }
 }
 #else
+
+#include "windows.h"
+
 static void setup_resource_list()
 {
+    WIN32_FIND_DATA fdFile;
+    HANDLE hFind = NULL;
+
+    char sPath[ 2048 ];
+
+    // Specify a file mask. *.* = We want everything!
+    sprintf( sPath, "%s\\*.*", "../../res" );
+
+    if ( ( hFind = FindFirstFile( sPath, &fdFile ) ) == INVALID_HANDLE_VALUE ) {
+        return;
+    }
+
+    do {
+        if ( strcmp( fdFile.cFileName, "." ) == 0 ) continue;
+        if ( strcmp( fdFile.cFileName, ".." ) == 0 ) continue;
+        if ( strstr( fdFile.cFileName, ".obj" ) == nullptr ) continue;
+        if ( fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) continue;
+
+        state.model_file_list[ state.model_file_count++ ] =
+            strdup( fdFile.cFileName );
+
+    } while ( FindNextFile( hFind, &fdFile ) ); // Find the next file.
+
+    FindClose( hFind ); // Always, Always, clean things up!
 }
 #endif
 
@@ -179,9 +206,15 @@ static void init()
     int miku_model = add_model( "miku.obj" );
     int floor_model = add_model( "SM_FloorTile.obj" );
     int miku_texture = load_texture( find_res( "colors_miku.png" ) );
+    int light_model = add_model( "SM_Ceiling_Light.obj" );
 
     rstate.model_texture_list[ miku_model ] = miku_texture;
     rstate.model_texture_list[ fan_model ] = miku_texture;
+    rstate.model_texture_list[ floor_model ] = miku_texture;
+
+    rstate.model_emission_list[ light_model ][ 0 ] = 1.0f;
+    rstate.model_emission_list[ light_model ][ 1 ] = 1.0f;
+    rstate.model_emission_list[ light_model ][ 2 ] = 1.0f;
 
     auto & model = rstate.model_list[ miku_model ];
 
@@ -233,6 +266,20 @@ static void rotate_entity( float dtheta )
     current_t.update();
 }
 
+static void duplicate_current_entity()
+{
+    if ( state.current_entity == -1 ) return;
+
+    int model = rstate.entity_list[ state.current_entity ].model;
+    transform_t & t = rstate.entity_list[ state.current_entity ].transform;
+
+    int e = add_entity( model );
+    state.current_entity = e;
+    rstate.hi_entity = e;
+
+    rstate.entity_list[ e ].transform = t;
+}
+
 static void imgui_render_entity_properties()
 {
     if ( state.current_entity == -1 ) return;
@@ -269,6 +316,9 @@ static void imgui_render_entity_properties()
     }
     if ( ImGui::Button( "remove" ) ) {
         remove_current_entity();
+    }
+    if ( ImGui::Button( "duplicate" ) ) {
+        duplicate_current_entity();
     }
 }
 
@@ -393,9 +443,9 @@ static void write_map()
     }
 
     char * json = cJSON_Print( map );
-    printf( "%s\n", json );
+    // printf( "%s\n", json );
 
-    FILE * file = fopen( "../res/map.json", "w" );
+    FILE * file = fopen( "../../res/map.json", "w" );
     fprintf( file, "%s", json );
     fclose( file );
 }
@@ -444,7 +494,7 @@ static void read_map()
         cJSON_GetVec3CaseSensitive( t.scale, entity, "scale" );
         t.update();
 
-        INFO_LOG( "read %s", model_json->valuestring );
+        // INFO_LOG( "read %s", model_json->valuestring );
     }
 }
 

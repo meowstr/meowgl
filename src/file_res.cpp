@@ -15,7 +15,7 @@ res_t find_res( const char * name )
 #ifdef EMSCRIPTEN
     snprintf( path, 1024, "./%s", name );
 #else
-    snprintf( path, 1024, "../res/%s", name );
+    snprintf( path, 1024, "../../res/%s", name );
 #endif
 
     FILE * file = fopen( path, "rb" );

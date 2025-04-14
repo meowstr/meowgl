@@ -417,7 +417,7 @@ int load_wavefront( wavefront_t * out, res_t res )
         ERROR_LOG( "failed to load wavefront (.obj)" );
     }
 
-    print_header( out );
+    //print_header( out );
 
     // stfu idc
     delete[] pos_list;

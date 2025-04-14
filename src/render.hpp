@@ -33,6 +33,7 @@ struct renderstate_t {
 
     wavefront_t * model_list;
     int * model_texture_list;
+    vec3 * model_emission_list;
     int model_count;
 
     int hi_entity;
