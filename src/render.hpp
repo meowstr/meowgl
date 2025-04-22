@@ -27,14 +27,31 @@ struct camera_t {
     float roll;
 };
 
+struct shadow_t {
+    vec3 pos;
+    int dir;
+};
+
+enum render_mode_t {
+    RENDER_MODE_NORMAL,
+    RENDER_MODE_WIRE_FRAME,
+};
+
 struct renderstate_t {
     entity_t * entity_list;
     int entity_count;
 
     wavefront_t * model_list;
     int * model_texture_list;
+    render_mode_t * model_render_mode_list;
     vec3 * model_emission_list;
     int model_count;
+
+    int * light_list; // entities that are lights
+    int light_count;
+
+    shadow_t * shadow_list;
+    int shadow_count;
 
     int hi_entity;
 

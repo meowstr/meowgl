@@ -218,8 +218,8 @@
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
-			"pos": [9, 1, 0],
-			"rot": [-90, -90, 0],
+			"pos": [5, 1, 0],
+			"rot": [-45, -90, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
@@ -352,9 +352,9 @@
 			"rot": [-90, -360, 0],
 			"scale": [1, 1, 1]
 		}, {
-			"model": "SM_FloorTile.obj",
-			"pos": [1, 1, -12],
-			"rot": [-90, -450, 0],
+			"model": "SM_Ceiling_Light.obj",
+			"pos": [8, 0, -12],
+			"rot": [0, -180, 0],
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_FloorTile.obj",
@@ -593,13 +593,138 @@
 			"scale": [1, 1, 1]
 		}, {
 			"model": "SM_Ceiling_Light.obj",
-			"pos": [12, 0, 1],
+			"pos": [-5.3375663757324219, 0.68756866455078125, -0.17665433883666992],
 			"rot": [0, -180, 0],
 			"scale": [1, 1, 1]
 		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [1, 1, -12],
+			"rot": [-90, -450, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Exhaust_Fan.obj",
+			"pos": [-3, 1, 0],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "pipe.obj",
+			"pos": [14, 2, 2],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Exhaust_Fan.obj",
+			"pos": [0, 0, 2],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [2, 0, 2],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [-1, 0, 1],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [-3, 0, 1],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [-3, 0, 3],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [-4, 0, 5],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [-2, 0, 7],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [0, 0, 7],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [1, 0, 6],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "miku.obj",
+			"pos": [11, 0, 0],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [5, 1, 5],
+			"rot": [-45, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [6, 1, 3],
+			"rot": [-90, -90, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [0, 0, 0],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [8, 0, -8],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [8, 0, -2],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [8, 0, -4],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [8, 0, -6],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
 			"model": "SM_Ceiling_Light.obj",
-			"pos": [8, 0, -12],
+			"pos": [0.35849976539611816, 0.1531219482421875, -0.16278600692749023],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Ceiling_Light.obj",
+			"pos": [3.645524263381958, 0.7911834716796875, -10.856454849243164],
 			"rot": [0, -180, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Light.obj",
+			"pos": [10.332714080810547, 1.1091969013214111, 1.1930203437805176],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Light.obj",
+			"pos": [0.81586313247680664, 1.6025984287261963, 0.449116587638855],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_Light.obj",
+			"pos": [9.4047231674194336, 1.109197735786438, -9.10874652862549],
+			"rot": [0, 0, 0],
+			"scale": [1, 1, 1]
+		}, {
+			"model": "SM_FloorTile.obj",
+			"pos": [9, 1, 0],
+			"rot": [-90, -90, 0],
 			"scale": [1, 1, 1]
 		}]
 }

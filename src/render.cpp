@@ -54,16 +54,32 @@ struct {
 
     struct {
         int id;
+
         int proj;
         int view;
         int model;
+
         int color;
-        int sun_combined;
-        int depth_texture;
         int material_texture;
         int material_mix;
         int emission;
-    } material_shader;
+    } deferred_shader;
+
+    struct {
+        int id;
+
+        int combined;
+        int model;
+    } shadow_shader;
+
+    struct {
+        int id;
+        int position_texture;
+        int depth_texture;
+        int depth_tile;
+        int light_matrix;
+        int light_pos;
+    } light_shader;
 
     struct {
         int id;
@@ -86,7 +102,8 @@ struct {
 
     struct {
         int id;
-        int scene_texture;
+        int color_texture;
+        int light_mask_texture;
         int bloom_texture;
         int size;
     } scene_compose_shader;
@@ -97,6 +114,16 @@ struct {
 
     vbuffer_t fb_pos_buffer;
     vbuffer_t fb_uv_buffer;
+
+    framebuffer_t deferred_fb;
+    int deferred_position_texture;
+    int deferred_normal_texture;
+    int deferred_color_texture;
+    int deferred_emission_texture;
+    int deferred_depth_texture;
+
+    framebuffer_t light_fb;
+    int light_mask_texture;
 
     framebuffer_t depth_fb;
     framebuffer_t highlight_fb;
@@ -114,22 +141,19 @@ struct {
 static void init_shader1()
 {
     int id = build_shader(
-        find_shader_string( "vertex_mesh" ),
-        find_shader_string( "fragment_material" )
+        find_shader_string( "vertex_deferred" ),
+        find_shader_string( "fragment_deferred" )
     );
-    intern.material_shader.id = id;
+    intern.deferred_shader.id = id;
 
-    intern.material_shader.proj = find_uniform( id, "u_proj" );
-    intern.material_shader.view = find_uniform( id, "u_view" );
-    intern.material_shader.model = find_uniform( id, "u_model" );
-    intern.material_shader.color = find_uniform( id, "u_color" );
-    intern.material_shader.sun_combined = find_uniform( id, "u_sun_combined" );
-    intern.material_shader.depth_texture =
-        find_uniform( id, "u_depth_texture" );
-    intern.material_shader.material_texture =
+    intern.deferred_shader.proj = find_uniform( id, "u_proj" );
+    intern.deferred_shader.view = find_uniform( id, "u_view" );
+    intern.deferred_shader.model = find_uniform( id, "u_model" );
+    intern.deferred_shader.color = find_uniform( id, "u_color" );
+    intern.deferred_shader.material_texture =
         find_uniform( id, "u_material_texture" );
-    intern.material_shader.material_mix = find_uniform( id, "u_material_mix" );
-    intern.material_shader.emission = find_uniform( id, "u_emission" );
+    intern.deferred_shader.material_mix = find_uniform( id, "u_material_mix" );
+    intern.deferred_shader.emission = find_uniform( id, "u_emission" );
 
     glBindAttribLocation( id, 0, "a_pos" );
     glBindAttribLocation( id, 1, "a_normal" );
@@ -176,11 +200,47 @@ static void init_shader4()
     );
 
     intern.scene_compose_shader.id = id;
-    intern.scene_compose_shader.scene_texture =
-        find_uniform( id, "u_scene_texture" );
+    intern.scene_compose_shader.color_texture =
+        find_uniform( id, "u_color_texture" );
+    intern.scene_compose_shader.light_mask_texture =
+        find_uniform( id, "u_light_mask_texture" );
     intern.scene_compose_shader.bloom_texture =
         find_uniform( id, "u_bloom_texture" );
     intern.scene_compose_shader.size = find_uniform( id, "u_size" );
+
+    glBindAttribLocation( id, 0, "a_pos" );
+    glBindAttribLocation( id, 1, "a_uv" );
+}
+
+static void init_shader5()
+{
+    int id = build_shader(
+        find_shader_string( "vertex_screen" ),
+        find_shader_string( "fragment_light" )
+    );
+
+    intern.light_shader.id = id;
+    intern.light_shader.position_texture =
+        find_uniform( id, "u_position_texture" );
+    intern.light_shader.depth_texture = find_uniform( id, "u_depth_texture" );
+    intern.light_shader.depth_tile = find_uniform( id, "u_depth_tile" );
+    intern.light_shader.light_matrix = find_uniform( id, "u_light_matrix" );
+    intern.light_shader.light_pos = find_uniform( id, "u_light_pos" );
+
+    glBindAttribLocation( id, 0, "a_pos" );
+    glBindAttribLocation( id, 1, "a_uv" );
+}
+
+static void init_shader6()
+{
+    int id = build_shader(
+        find_shader_string( "vertex_shadow" ),
+        find_shader_string( "fragment_shadow" )
+    );
+
+    intern.shadow_shader.id = id;
+    intern.shadow_shader.combined = find_uniform( id, "u_combined" );
+    intern.shadow_shader.model = find_uniform( id, "u_model" );
 
     glBindAttribLocation( id, 0, "a_pos" );
     glBindAttribLocation( id, 1, "a_uv" );
@@ -248,29 +308,37 @@ static void render_scene()
 
     for ( int i = 0; i < rstate.entity_count; i++ ) {
         set_uniform(
-            intern.material_shader.model,
+            intern.deferred_shader.model,
             rstate.entity_list[ i ].transform.m
         );
-        set_uniform( intern.material_shader.material_texture, 1 );
-        set_uniform( intern.material_shader.color, white );
+        set_uniform( intern.deferred_shader.material_texture, 1 );
+        set_uniform( intern.deferred_shader.color, white );
         int model_id = rstate.entity_list[ i ].model;
         set_uniform(
-            intern.material_shader.emission,
+            intern.deferred_shader.emission,
             rstate.model_emission_list[ model_id ]
         );
         if ( rstate.model_texture_list[ model_id ] == -1 ) {
             glActiveTexture( GL_TEXTURE1 );
             glBindTexture( GL_TEXTURE_2D, 0 );
-            set_uniform( intern.material_shader.material_mix, 1.0f );
+            set_uniform( intern.deferred_shader.material_mix, 1.0f );
         } else {
             glActiveTexture( GL_TEXTURE1 );
             glBindTexture(
                 GL_TEXTURE_2D,
                 rstate.model_texture_list[ model_id ]
             );
-            set_uniform( intern.material_shader.material_mix, 0.0f );
+            set_uniform( intern.deferred_shader.material_mix, 0.0f );
+        }
+        if ( rstate.model_render_mode_list[ model_id ] ==
+             RENDER_MODE_WIRE_FRAME ) {
+            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
         }
         render_model( rstate.entity_list[ i ].model );
+        if ( rstate.model_render_mode_list[ model_id ] ==
+             RENDER_MODE_WIRE_FRAME ) {
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        }
     }
 }
 
@@ -301,6 +369,11 @@ int add_entity( int model )
 
     rstate.entity_list[ id ].transform.identity();
 
+    if ( rstate.model_emission_list[ model ][ 0 ] != 0.0 ) {
+        // add light
+        rstate.light_list[ rstate.light_count++ ] = id;
+    }
+
     return id;
 }
 
@@ -316,6 +389,7 @@ int add_model( const char * filename )
     load_wavefront( rstate.model_list + id, find_res( filename ) );
     rstate.model_list[ id ].filename = strdup( filename );
     rstate.model_texture_list[ id ] = -1;
+    rstate.model_render_mode_list[ id ] = RENDER_MODE_NORMAL;
     glm_vec3_zero( rstate.model_emission_list[ id ] );
     rstate.model_count++;
 
@@ -333,9 +407,14 @@ void render_init()
     rstate.entity_list = new entity_t[ 1024 ];
     rstate.model_list = new wavefront_t[ 32 ];
     rstate.model_texture_list = new int[ 32 ];
+    rstate.model_render_mode_list = new render_mode_t[ 32 ];
     rstate.model_emission_list = new vec3[ 32 ];
+    rstate.light_list = new int[ 1024 ];
+    rstate.shadow_list = new shadow_t[ 1024 ];
     rstate.entity_count = 0;
     rstate.model_count = 0;
+    rstate.light_count = 0;
+    rstate.shadow_count = 0;
 
     glm_mat4_identity( intern.model );
     glm_mat4_identity( intern.view );
@@ -355,8 +434,23 @@ void render_init()
     init_shader2();
     init_shader3();
     init_shader4();
+    init_shader5();
+    init_shader6();
 
-    intern.depth_fb.init( 4096, 4096 );
+    intern.deferred_fb.init( hardware_width(), hardware_height() );
+
+    // clang-format off
+    intern.deferred_color_texture = intern.deferred_fb.init_color_texture( 0 );
+    intern.deferred_position_texture = intern.deferred_fb.init_hdr_texture( 1 );
+    intern.deferred_normal_texture = intern.deferred_fb.init_hdr_texture( 2 );
+    intern.deferred_emission_texture = intern.deferred_fb.init_color_texture( 3 );
+    intern.deferred_depth_texture = intern.deferred_fb.init_depth_texture();
+    // clang-format on
+
+    intern.light_fb.init( hardware_width(), hardware_height() );
+    intern.light_mask_texture = intern.light_fb.init_color_texture( 0 );
+
+    intern.depth_fb.init( 8192, 8192 );
     intern.highlight_fb.init( hardware_width(), hardware_height() );
     intern.bloom_fb.init( hardware_width(), hardware_height() );
     intern.scene_fb.init( hardware_width(), hardware_height() );
@@ -423,45 +517,249 @@ static void render_highlight()
     glEnable( GL_DEPTH_TEST );
 }
 
-static void render_shadow_map()
+static void add_shadow( vec3 pos, int dir )
 {
-    glCullFace( GL_FRONT );
-    glBindFramebuffer( GL_FRAMEBUFFER, intern.depth_fb.id );
-    glViewport( 0, 0, intern.depth_fb.width, intern.depth_fb.height );
-    glClear( GL_DEPTH_BUFFER_BIT );
+    int i = rstate.shadow_count++;
+    glm_vec3_copy( pos, rstate.shadow_list[ i ].pos );
+    rstate.shadow_list[ i ].dir = dir;
+}
 
-    setup_light_camera();
+static void add_point_shadows( vec3 pos )
+{
+    add_shadow( pos, 0 );
+    add_shadow( pos, 1 );
+    add_shadow( pos, 2 );
+    add_shadow( pos, 3 );
+    add_shadow( pos, 4 );
+    add_shadow( pos, 5 );
+}
 
-    glm_mat4_mul( intern.proj, intern.view, intern.sun_combined );
+static void register_shadows()
+{
+    rstate.shadow_count = 0;
+    for ( int i = 0; i < rstate.light_count; i++ ) {
+        int e = rstate.light_list[ i ];
+        add_point_shadows( rstate.entity_list[ e ].transform.pos );
+    }
+}
 
-    glUseProgram( intern.material_shader.id );
+static void enable_n_attachments( int n )
+{
+    static GLenum buffers[ 32 ];
 
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, 0 );
+    for ( int i = 0; i < n; i++ ) {
+        buffers[ i ] = GL_COLOR_ATTACHMENT0 + i;
+    }
 
-    set_uniform( intern.material_shader.view, intern.view );
-    set_uniform( intern.material_shader.proj, intern.proj );
-    set_uniform( intern.material_shader.depth_texture, 0 );
+    glDrawBuffers( n, buffers );
+}
+
+static void do_geometry_pass()
+{
+    setup_camera();
+
+    glBindFramebuffer( GL_FRAMEBUFFER, intern.deferred_fb.id );
+
+    enable_n_attachments( 4 );
+
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glViewport( 0, 0, hardware_width(), hardware_height() );
+    glCullFace( GL_BACK );
+
+    glUseProgram( intern.deferred_shader.id );
+
+    set_uniform( intern.deferred_shader.view, intern.view );
+    set_uniform( intern.deferred_shader.proj, intern.proj );
 
     render_scene();
 }
 
-static void enable_attachment0()
+static void do_light_pass()
 {
-    GLenum buffers[]{ GL_COLOR_ATTACHMENT0 };
-    glDrawBuffers( 1, buffers );
+    glBindFramebuffer( GL_FRAMEBUFFER, intern.light_fb.id );
+
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glUseProgram( intern.light_shader.id );
+
+    enable_n_attachments( 1 );
+
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( GL_TEXTURE_2D, intern.deferred_position_texture );
+    set_uniform( intern.light_shader.position_texture, 0 );
+
+    glDisable( GL_CULL_FACE );
+    glDisable( GL_DEPTH_TEST );
+
+    for ( int i = 0; i < rstate.light_count; i++ ) {
+        int e = rstate.light_list[ i ];
+        set_uniform(
+            intern.light_shader.light_pos,
+            rstate.entity_list[ e ].transform.pos
+        );
+
+        render_fb();
+    }
+
+    glEnable( GL_CULL_FACE );
+    glEnable( GL_DEPTH_TEST );
 }
 
-static void enable_attachment1()
+static void compute_shadow_tile( ivec4 out, int shadow_index )
 {
-    GLenum buffers[]{ GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers( 1, buffers );
+    out[ 0 ] = 1024 * ( shadow_index % 8 );
+    out[ 1 ] = 1024 * ( shadow_index / 8 );
+    out[ 2 ] = 1024;
+    out[ 3 ] = 1024;
 }
 
-static void enable_attachment0_attachment1()
+static void compute_shadow_matrix( mat4 out, int shadow_index )
 {
-    GLenum buffers[]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers( 2, buffers );
+    static mat4 m1;
+    static mat4 m2;
+
+    glm_perspective( glm_rad( 90 ), 1, 0.01, 10, m1 );
+
+    if ( rstate.shadow_list[ shadow_index ].dir == 0 ) {
+        glm_look(
+            rstate.shadow_list[ shadow_index ].pos,
+            vec3{ 1, 0, 0 },
+            vec3{ 0, 1, 0 },
+            m2
+        );
+    } else if ( rstate.shadow_list[ shadow_index ].dir == 1 ) {
+        glm_look(
+            rstate.shadow_list[ shadow_index ].pos,
+            vec3{ 0, 1, 0 },
+            vec3{ 0, 0, 1 },
+            m2
+        );
+    } else if ( rstate.shadow_list[ shadow_index ].dir == 2 ) {
+        glm_look(
+            rstate.shadow_list[ shadow_index ].pos,
+            vec3{ 0, 0, 1 },
+            vec3{ 1, 0, 0 },
+            m2
+        );
+    } else if ( rstate.shadow_list[ shadow_index ].dir == 3 ) {
+        glm_look(
+            rstate.shadow_list[ shadow_index ].pos,
+            vec3{ -1, 0, 0 },
+            vec3{ 0, 1, 0 },
+            m2
+        );
+    } else if ( rstate.shadow_list[ shadow_index ].dir == 4 ) {
+        glm_look(
+            rstate.shadow_list[ shadow_index ].pos,
+            vec3{ 0, -1, 0 },
+            vec3{ 0, 0, 1 },
+            m2
+        );
+    } else {
+        glm_look(
+            rstate.shadow_list[ shadow_index ].pos,
+            vec3{ 0, 0, -1 },
+            vec3{ 1, 0, 0 },
+            m2
+        );
+    }
+
+    glm_mat4_mul( m1, m2, out );
+}
+
+static void compute_shadow_map( int i )
+{
+    ivec4 tile;
+    mat4 m;
+
+    compute_shadow_tile( tile, i );
+    compute_shadow_matrix( m, i );
+
+    glViewport( tile[ 0 ], tile[ 1 ], tile[ 2 ], tile[ 3 ] );
+
+    // clear the tile
+    // glEnable( GL_SCISSOR_TEST );
+    // glScissor( tile[ 0 ], tile[ 1 ], tile[ 2 ], tile[ 3 ] );
+    // glClear( GL_DEPTH_BUFFER_BIT );
+    // glDisable( GL_SCISSOR_TEST );
+
+    set_uniform( intern.shadow_shader.combined, m );
+
+    for ( int i = 0; i < rstate.entity_count; i++ ) {
+        // skip wireframe
+        if ( rstate.model_render_mode_list[ rstate.entity_list[ i ].model ] ==
+             RENDER_MODE_WIRE_FRAME ) {
+            continue;
+        }
+
+        set_uniform(
+            intern.shadow_shader.model,
+            rstate.entity_list[ i ].transform.m
+        );
+        render_model( rstate.entity_list[ i ].model );
+    }
+}
+
+static void compute_all_shadow_maps()
+{
+    glBindFramebuffer( GL_FRAMEBUFFER, intern.depth_fb.id );
+    glClear( GL_DEPTH_BUFFER_BIT );
+    glUseProgram( intern.shadow_shader.id );
+    enable_n_attachments( 1 );
+
+    for ( int i = 0; i < rstate.shadow_count; i++ ) {
+        compute_shadow_map( i );
+    }
+}
+
+static void do_shadow_pass( int i )
+{
+    mat4 m;
+    ivec4 tile;
+    compute_shadow_matrix( m, i );
+    compute_shadow_tile( tile, i );
+
+    // TODO: idk make this better
+    vec4 float_tile;
+    float_tile[ 0 ] = tile[ 0 ];
+    float_tile[ 1 ] = tile[ 1 ];
+    float_tile[ 2 ] = tile[ 2 ];
+    float_tile[ 3 ] = tile[ 3 ];
+
+    set_uniform( intern.light_shader.light_pos, rstate.shadow_list[ i ].pos );
+    set_uniform( intern.light_shader.light_matrix, m );
+    set_uniform( intern.light_shader.depth_tile, float_tile );
+
+    render_fb();
+}
+
+static void do_all_shadow_passes()
+{
+    glBindFramebuffer( GL_FRAMEBUFFER, intern.light_fb.id );
+    glViewport( 0, 0, hardware_width(), hardware_height() );
+    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glUseProgram( intern.light_shader.id );
+    enable_n_attachments( 1 );
+
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( GL_TEXTURE_2D, intern.deferred_position_texture );
+    glActiveTexture( GL_TEXTURE1 );
+    glBindTexture( GL_TEXTURE_2D, intern.depth_fb_texture );
+    set_uniform( intern.light_shader.position_texture, 0 );
+    set_uniform( intern.light_shader.depth_texture, 1 );
+
+    glDisable( GL_CULL_FACE );
+    glDisable( GL_DEPTH_TEST );
+
+    for ( int i = 0; i < rstate.shadow_count; i++ ) {
+        do_shadow_pass( i );
+    }
+
+    glEnable( GL_CULL_FACE );
+    glEnable( GL_DEPTH_TEST );
 }
 
 void render()
@@ -470,50 +768,52 @@ void render()
     size[ 0 ] = hardware_width();
     size[ 1 ] = hardware_height();
 
-    render_shadow_map();
+    // render_shadow_map();
 
-    setup_camera();
+    do_geometry_pass();
 
-    glBindFramebuffer( GL_FRAMEBUFFER, intern.scene_fb.id );
-
-    enable_attachment0();
-    glClearColor( 1.0f, 0.0f, 0.0f, 1.0f );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-    enable_attachment1();
-    glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-    enable_attachment0_attachment1();
-    glViewport( 0, 0, hardware_width(), hardware_height() );
-    glCullFace( GL_BACK );
-
-    glUseProgram( intern.material_shader.id );
-
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, intern.depth_fb_texture );
-
-    set_uniform( intern.material_shader.view, intern.view );
-    set_uniform( intern.material_shader.proj, intern.proj );
-    set_uniform( intern.material_shader.sun_combined, intern.sun_combined );
-    set_uniform( intern.material_shader.depth_texture, 0 );
-
-    render_scene();
+    // do_light_pass();
+    register_shadows();
+    compute_all_shadow_maps();
+    do_all_shadow_passes();
 
     glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-    enable_attachment0();
+
+    enable_n_attachments( 1 );
 
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    //{
+    //    glBindFramebuffer( GL_READ_FRAMEBUFFER, intern.light_fb.id );
+    //    glBindFramebuffer( GL_DRAW_FRAMEBUFFER, 0 );
+
+    //    glReadBuffer( GL_COLOR_ATTACHMENT0 );
+    //    glDrawBuffer( GL_COLOR_ATTACHMENT0 );
+
+    //    glBlitFramebuffer(
+    //        0,
+    //        0,
+    //        hardware_width(),
+    //        hardware_height(),
+    //        0,
+    //        0,
+    //        hardware_width(),
+    //        hardware_height(),
+    //        GL_COLOR_BUFFER_BIT,
+    //        GL_NEAREST
+    //    );
+    //}
 
     glUseProgram( intern.scene_compose_shader.id );
 
     glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, intern.scene_fb_texture );
+    glBindTexture( GL_TEXTURE_2D, intern.deferred_color_texture );
     glActiveTexture( GL_TEXTURE1 );
-    glBindTexture( GL_TEXTURE_2D, intern.scene_fb_emission_texture );
-    set_uniform( intern.scene_compose_shader.scene_texture, 0 );
-    set_uniform( intern.scene_compose_shader.bloom_texture, 1 );
+    glBindTexture( GL_TEXTURE_2D, intern.light_mask_texture );
+
+    set_uniform( intern.scene_compose_shader.color_texture, 0 );
+    set_uniform( intern.scene_compose_shader.light_mask_texture, 1 );
     set_uniform( intern.scene_compose_shader.size, size );
 
     glDisable( GL_CULL_FACE );

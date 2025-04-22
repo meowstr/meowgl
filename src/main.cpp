@@ -206,7 +206,7 @@ static void init()
     int miku_model = add_model( "miku.obj" );
     int floor_model = add_model( "SM_FloorTile.obj" );
     int miku_texture = load_texture( find_res( "colors_miku.png" ) );
-    int light_model = add_model( "SM_Ceiling_Light.obj" );
+    int light_model = add_model( "SM_Light.obj" );
 
     rstate.model_texture_list[ miku_model ] = miku_texture;
     rstate.model_texture_list[ fan_model ] = miku_texture;
@@ -215,6 +215,7 @@ static void init()
     rstate.model_emission_list[ light_model ][ 0 ] = 1.0f;
     rstate.model_emission_list[ light_model ][ 1 ] = 1.0f;
     rstate.model_emission_list[ light_model ][ 2 ] = 1.0f;
+    rstate.model_render_mode_list[ light_model ] = RENDER_MODE_WIRE_FRAME;
 
     auto & model = rstate.model_list[ miku_model ];
 
