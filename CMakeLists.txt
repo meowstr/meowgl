@@ -33,6 +33,8 @@ add_library( cglm INTERFACE )
 target_include_directories( cglm INTERFACE libs/cglm/include )
 add_library( stb INTERFACE )
 target_include_directories( stb INTERFACE libs/stb/include )
+add_library( cgltf INTERFACE )
+target_include_directories( cgltf INTERFACE libs/cgltf)
 add_library( glad libs/glad/src/glad.c )
 target_include_directories( glad PUBLIC libs/glad/include )
 add_library( imgui 
@@ -56,7 +58,7 @@ if ( (NOT DEFINED EMSCRIPTEN) AND UNIX )
   find_package( PkgConfig REQUIRED )
   pkg_check_modules( GLFW REQUIRED IMPORTED_TARGET glfw3 )
   add_executable( app ${GAME_SOURCES} src/platform/desktop.cpp )
-  target_link_libraries( app PRIVATE imgui cjson glad cglm stb PkgConfig::GLFW )
+  target_link_libraries( app PRIVATE imgui cjson cgltf glad cglm stb PkgConfig::GLFW )
   add_custom_target( run COMMAND app DEPENDS app WORKING_DIRECTORY ${CMAKE_PROJECT_DIR} )
 
 endif()
@@ -75,7 +77,7 @@ if ( (NOT DEFINED EMSCRIPTEN) AND WIN32 )
 
   add_executable( app ${GAME_SOURCES} src/platform/desktop.cpp )
   set_target_properties(app PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
-  target_link_libraries( app PRIVATE imgui cjson glad cglm stb glfw )
+  target_link_libraries( app PRIVATE imgui cjson cgltf glad cglm stb glfw )
 endif()
 
 #

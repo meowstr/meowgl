@@ -1,5 +1,8 @@
 #include "utils.hpp"
 
+#define CGLTF_IMPLEMENTATION
+#include <cgltf.h>
+
 int tick_timer( float * timer, float step )
 {
     *timer -= step;

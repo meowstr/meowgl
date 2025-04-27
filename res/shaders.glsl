@@ -47,18 +47,6 @@ uniform vec3 u_emission;
 #define O_NORMAL   2
 #define O_EMISSION 3
 
-// float light_from_scene()
-// {
-//     vec2 pos_tex_coords = v_pos_sun_coords.xy * 0.5 + 0.5;
-//     float depth = v_pos_sun_coords.z * 0.5 + 0.5;
-// 
-//     float bias = 0.00005;
-// 
-//     float tex_depth = bias + texture2D( u_depth_texture, pos_tex_coords ).r;
-//     //return depth < tex_depth ? 20.0 : 2.0;
-//     return 5.0;
-// }
-
 void main()
 {
     vec4 texture_color = texture2D( u_material_texture, v_uv );
@@ -153,10 +141,14 @@ void main()
 precision highp float;
 
 uniform sampler2D u_position_texture;
+uniform sampler2D u_normal_texture;
 uniform sampler2D u_depth_texture;
 uniform vec4 u_depth_tile;
 uniform mat4 u_light_matrix;
 uniform vec3 u_light_pos;
+
+uniform float u_shadow_bias;
+//uniform float u_normal_bias;
 
 varying vec2 v_uv;
 
@@ -174,8 +166,8 @@ bool do_shadow_test( vec3 pos )
     // compute depth in light space
     float depth = pos_light_space.z * 0.5 + 0.5;
     // sample
-    float bias = 0.00005;
-    float sample_depth = bias + texture2D( u_depth_texture, tile_tex_coords ).r;
+    //float sample_depth = u_depth_bias + texture2D( u_depth_texture, tile_tex_coords ).r;
+    float sample_depth = texture2D( u_depth_texture, tile_tex_coords ).r;
     // make sure its in our bounds and yea
     return tex_coords.x >= 0.0 && tex_coords.x <= 1.0 && 
            tex_coords.y >= 0.0 && tex_coords.y <= 1.0 && 
@@ -186,10 +178,15 @@ bool do_shadow_test( vec3 pos )
 void main()
 {
     vec3 pos = texture2D( u_position_texture, v_uv ).xyz;
+    vec3 normal = texture2D( u_normal_texture, v_uv ).xyz;
 
-    if ( distance( pos, u_light_pos ) < 4.0 && do_shadow_test( pos ) ) {
+    vec3 to_light = normalize( u_light_pos - pos );
+    float diffuse_factor = max( dot( normal, to_light ), 0.0 );
+
+    if ( distance( pos, u_light_pos ) < 10.0 && 
+         do_shadow_test( pos + normal * u_shadow_bias ) ) {
         // lit
-        gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+        gl_FragColor = diffuse_factor * vec4( 1.0, 1.0, 1.0, 1.0 );
     } else {
         // not lit
         gl_FragColor = vec4( 0.0, 0.0, 0.0, 0.0 );
@@ -214,23 +211,24 @@ void main()
     //float exposure = 0.1;
 
     float light = texture2D(u_light_mask_texture, v_uv).r;
-    light = clamp(light, 0.1, 0.8); // ambient
+    light = clamp(light, 0.1, 0.6); // ambient
     vec3 color = texture2D( u_color_texture, v_uv ).rgb;
 
-    gl_FragColor = vec4(light * color, 1.0);
 
-    //vec3 emission = vec3(0.0, 0.0, 0.0);
-    //int n_theta = 50;
-    //int n_radius = 30;
-    //for (int i = 0; i < n_theta; i++) {
-    //    for (int j = 0; j < n_radius; j++) {
-    //        vec2 uv = v_uv;
-    //        float theta = float(i) / float(n_theta) * 6.28318530718;
-    //        uv.x += float(j) * cos(theta) * (1.0 / u_size.x);
-    //        uv.y += float(j) * sin(theta) * (1.0 / u_size.y);
-    //        emission += (1.0 / (float(n_theta) * float(n_radius))) * texture2D( u_bloom_texture, uv ).rgb;
-    //    }
-    //}
+    vec3 emission = vec3(0.0, 0.0, 0.0);
+    int n_theta = 50;
+    int n_radius = 30;
+    for (int i = 0; i < n_theta; i++) {
+        for (int j = 0; j < n_radius; j++) {
+            vec2 uv = v_uv;
+            float theta = float(i) / float(n_theta) * 6.28318530718;
+            uv.x += float(j) * cos(theta) * (1.0 / u_size.x);
+            uv.y += float(j) * sin(theta) * (1.0 / u_size.y);
+            emission += (1.0 / (float(n_theta) * float(n_radius))) * texture2D( u_bloom_texture, uv ).rgb;
+        }
+    }
+
+    gl_FragColor = vec4(light * color + 2.0 * emission, 1.0);
 
     //vec3 hdr = scene + 50.0 * emission;
 

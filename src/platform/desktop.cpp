@@ -105,6 +105,7 @@ int hardware_init()
     glfwWindowHintString( GLFW_X11_CLASS_NAME, "floater" );
     glfwWindowHintString( GLFW_X11_INSTANCE_NAME, "floater" );
     glfwWindowHint( GLFW_RESIZABLE, 0 );
+    //glfwWindowHint( GLFW_SAMPLES, 4 );
 
     intern.window = glfwCreateWindow(
         intern.width,

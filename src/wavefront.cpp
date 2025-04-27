@@ -10,7 +10,7 @@
 
 // #define MAX_VERTEX_COUNT         4096
 // #define MAX_OBJ_COUNT            16
-#define MAX_VERTEX_COUNT         100000
+#define MAX_VERTEX_COUNT         1000000
 #define MAX_OBJ_COUNT            1000
 #define MAX_NAME_LENGTH          64
 #define MAX_POLYGON_LENGTH       32

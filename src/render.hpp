@@ -4,6 +4,9 @@
 
 #include <cglm/types.h>
 
+#define MEOWGL_MAX_MODEL_COUNT  32
+#define MEOWGL_MAX_ENTITY_COUNT 1024
+
 struct transform_t {
     vec3 pos;
     vec3 rot;
@@ -14,12 +17,6 @@ struct transform_t {
     void identity();
 };
 
-struct entity_t {
-    transform_t transform;
-    int model;
-    int parent;
-};
-
 struct camera_t {
     vec3 pos;
     float yaw;
@@ -27,38 +24,45 @@ struct camera_t {
     float roll;
 };
 
-struct shadow_t {
-    vec3 pos;
-    int dir;
-};
-
-enum render_mode_t {
-    RENDER_MODE_NORMAL,
-    RENDER_MODE_WIRE_FRAME,
-};
-
 struct renderstate_t {
-    entity_t * entity_list;
-    int entity_count;
+    // clang-format off
+    float *        vertex_pos_list;            // VERTEX TABLE
+    float *        vertex_normal_list;
+    float *        vertex_uv_list;
+    int            vertex_count;
+    int            vertex_cap;
 
-    wavefront_t * model_list;
-    int * model_texture_list;
-    render_mode_t * model_render_mode_list;
-    vec3 * model_emission_list;
-    int model_count;
+    int *          model_size_list;            // MODEL TABLE
+    int *          model_offset_list;          //
+    int *          model_texture_list;         //
+    vec3 *         model_emission_list;        //
+    int            model_count;                //
 
-    int * light_list; // entities that are lights
-    int light_count;
+    transform_t *  entity_transform_list;      // ENTITY TABLE
+    int *          entity_model_list;          //
+    int            entity_count;               //
 
-    shadow_t * shadow_list;
-    int shadow_count;
+    int *          e_model_entity_list;        // MODEL ENTITY TABLE
+    int            e_model_count;              //
 
-    int hi_entity;
+    int *          e_light_entity_list;        // LIGHT ENTITY TABLE
+    int            e_light_count;              //
 
-    camera_t camera;
+    int *          e_nocast_light_entity_list; // NON-CASTING LIGHT ENTITY TABLE
+    int            e_nocast_light_count;       //
+    // clang-format on
 
-    mat4 view_inverse;
-    mat4 combined;
+    int light_model; // model used for visualizing lights
+
+    int hi_entity; // entity to highlight/outline
+
+    camera_t camera; // for moving the camera
+
+    mat4 view_inverse; // for grabbing things
+
+    mat4 combined; // for raycasting to things
+
+    float shadow_bias;
 };
 
 extern renderstate_t rstate;
@@ -67,9 +71,8 @@ void render_init();
 
 void render();
 
-void update_camera();
+void compute_all_shadow_maps();
 
-int add_entity( int model );
-int add_model( const char * filename );
+void compute_camera_matrices();
 
-int add_entity( int model, float x, float y, float z );
+void update_vertex_buffers();

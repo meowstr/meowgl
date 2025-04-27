@@ -222,7 +222,7 @@ void vbuffer_t::set( const float * new_data, int new_element_count )
         GL_ARRAY_BUFFER,                                    // type
         new_element_count * element_size * sizeof( float ), // size in bytes
         new_data,                                           // data pointer
-        GL_DYNAMIC_DRAW                                     // render strategy
+        GL_STATIC_DRAW                                      // render strategy
     );
 
     element_count = new_element_count;

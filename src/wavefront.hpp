@@ -3,8 +3,6 @@
 #include "res.hpp"
 
 struct wavefront_t {
-    const char * filename;
-
     float * pos_list;
     float * normal_list;
     float * uv_list;
